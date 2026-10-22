@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: pip install -e .
+      - run: python -m unittest discover -s tests -v
+
+  self-scan:
+    name: Dogfood - SecScan scans itself
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install .
+      - name: Gate - fail on high severity
+        run: secscan src --fail-on high
+      - name: Generate SARIF
+        run: secscan . --exclude examples --exclude tests -f sarif -o secscan.sarif --fail-on none
+      - name: Upload to GitHub code scanning
+        uses: github/codeql-action/upload-sarif@v3
+        continue-on-error: true   # needs code scanning enabled on the repo
+        with:
+          sarif_file: secscan.sarif

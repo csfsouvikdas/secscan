@@ -1,0 +1,185 @@
+SecScan 1.0.0 - scanned 4 file(s) in 0.01s
+
+[CRITICAL] SEC001  AWS access key ID  (CWE-798)
+    app.py:14:22
+    > AWS_ACCESS_KEY_ID = "AKIA****************"
+    fix: Revoke the key, rotate it, and load credentials from the environment or a secrets manager.
+
+[CRITICAL] INJ106  File inclusion from request data (PHP)  (CWE-98)
+    upload.php:7:1
+    > include($_GET['page']);
+    fix: Never include user-controlled paths; use an allow-list.
+
+[HIGH] SEC006  Hard-coded credential  (CWE-798)
+    Login.java:7:25
+    > static final String API_TOKEN = "live*****************";
+    fix: Read secrets from environment variables or a secrets manager; never commit them.
+
+[HIGH] INJ101  SQL built with string concatenation  (CWE-89)
+    Login.java:11:39
+    > ResultSet r = s.executeQuery("SELECT * FROM users WHERE name = '" + user + "'");
+    fix: Use parameterised queries / prepared statements.
+
+[HIGH] DES301  Unsafe deserialization  (CWE-502)
+    Login.java:14:32
+    > ObjectInputStream in = new ObjectInputStream(new FileInputStream("session.bin"));
+    fix: Use a data-only format such as JSON and validate the schema.
+
+[HIGH] SEC006  Hard-coded credential  (CWE-798)
+    app.py:15:1
+    > DB_PASSWORD = "Supe**********"
+    fix: Read secrets from environment variables or a secrets manager; never commit them.
+
+[HIGH] PY106  SQL query built from dynamic string  (CWE-89)
+    app.py:23:11
+    > row = db.execute(f"SELECT * FROM users WHERE name = '{name}'").fetchone()
+    fix: Pass parameters separately: cursor.execute(sql, params).
+
+[HIGH] PY102  Shell command execution  (CWE-78)
+    app.py:30:12
+    > return subprocess.check_output("ping -c 1 " + host, shell=True)
+    fix: Call subprocess with an argument list and shell=False.
+
+[HIGH] PY108  Template injection / autoescape off  (CWE-1336)
+    app.py:35:12
+    > return render_template_string("<h1>Hello " + request.args.get("n", "") + "</h1>")
+    fix: Render static templates and keep autoescape enabled.
+
+[HIGH] PY101  eval()/exec() call  (CWE-95)
+    app.py:40:16
+    > return str(eval(request.args.get("expr")))
+    fix: Use ast.literal_eval or a purpose-built parser.
+
+[HIGH] PY103  Unsafe deserialization (pickle/marshal/shelve)  (CWE-502)
+    app.py:45:11
+    > obj = pickle.loads(request.data)
+    fix: Use JSON or another data-only format.
+
+[HIGH] PY104  yaml.load without a safe loader  (CWE-502)
+    app.py:46:11
+    > cfg = yaml.load(request.data)
+    fix: Use yaml.safe_load.
+
+[HIGH] CRY203  TLS certificate verification disabled  (CWE-295)
+    app.py:56:34
+    > return requests.get(url, verify=False).text
+    fix: Keep verification on; add the CA bundle you need instead of disabling checks.
+
+[HIGH] INJ101  SQL built with string concatenation  (CWE-89)
+    server.js:11:13
+    > db.query("SELECT * FROM items WHERE name = '" + req.query.q + "'", (err, rows) => res.json(rows));
+    fix: Use parameterised queries / prepared statements.
+
+[HIGH] INJ102  OS command built from dynamic input  (CWE-78)
+    server.js:15:3
+    > exec("ls " + req.query.dir, (e, out) => res.send(out));
+    fix: Avoid the shell; pass an argument list to an exec API and validate input.
+
+[HIGH] INJ107  Path traversal via request input  (CWE-22)
+    server.js:19:15
+    > res.send(fs.readFileSync(req.query.path));
+    fix: Resolve the path and confirm it stays inside an allowed base directory.
+
+[HIGH] CRY203  TLS certificate verification disabled  (CWE-295)
+    server.js:28:17
+    > const agent = { rejectUnauthorized: false };
+    fix: Keep verification on; add the CA bundle you need instead of disabling checks.
+
+[HIGH] INJ105  Dynamic code evaluation  (CWE-95)
+    server.js:29:48
+    > app.get("/eval", (req, res) => res.send(String(eval(req.query.code))));
+    fix: Remove eval; use JSON.parse or a safe expression parser.
+
+[HIGH] INJ101  SQL built with string concatenation  (CWE-89)
+    upload.php:5:32
+    > $result = mysqli_query($conn, "SELECT * FROM orders WHERE id = " . $id);
+    fix: Use parameterised queries / prepared statements.
+
+[HIGH] XSS102  Request data echoed without escaping (PHP)  (CWE-79)
+    upload.php:6:1
+    > echo "Hello " . $_GET['name'];
+    fix: Wrap output with htmlspecialchars($x, ENT_QUOTES, 'UTF-8').
+
+[HIGH] INJ103  Shell execution with variable (PHP)  (CWE-78)
+    upload.php:8:1
+    > system("convert " . $_POST['file'] . " out.png");
+    fix: Use escapeshellarg() and avoid shell functions where possible.
+
+[HIGH] DES301  Unsafe deserialization  (CWE-502)
+    upload.php:9:9
+    > $data = unserialize($_COOKIE['prefs']);
+    fix: Use a data-only format such as JSON and validate the schema.
+
+[MEDIUM] CRY201  Weak hash algorithm (MD5/SHA-1)  (CWE-327)
+    Login.java:12:42
+    > MessageDigest md = MessageDigest.getInstance("MD5");
+    fix: Use SHA-256+ for integrity, and bcrypt/scrypt/Argon2 for passwords.
+
+[MEDIUM] INJ104  Runtime.exec / sh -c execution  (CWE-78)
+    Login.java:13:9
+    > Runtime.getRuntime().exec("echo " + user);
+    fix: Use ProcessBuilder with an argument list; never concatenate user input.
+
+[MEDIUM] SEC007  High-entropy string (possible secret)  (CWE-798)
+    app.py:16:23
+    > SESSION_SIGNING_KEY = "q8Vd************************************"
+    fix: If this is a credential, rotate it and load it from the environment.
+
+[MEDIUM] PY105  Weak hash (hashlib md5/sha1)  (CWE-327)
+    app.py:51:12
+    > return hashlib.md5(pw.encode()).hexdigest()
+    fix: Use hashlib.sha256 or a password hasher (bcrypt/argon2).
+
+[MEDIUM] PY107  Insecure temporary file (mktemp)  (CWE-377)
+    app.py:62:12
+    > return tempfile.mktemp()
+    fix: Use tempfile.mkstemp or NamedTemporaryFile.
+
+[MEDIUM] CFG401  Debug mode enabled  (CWE-489)
+    app.py:66:5
+    > app.run(host="0.0.0.0", debug=True)
+    fix: Disable debug in production and drive it from environment configuration.
+
+[MEDIUM] CFG402  Wildcard CORS / allowed hosts  (CWE-942)
+    server.js:8:46
+    > app.use((req, res, next) => { res.setHeader("Access-Control-Allow-Origin", "*"); next(); });
+    fix: List the specific origins/hosts that are allowed.
+
+[MEDIUM] XSS101  Unsafe HTML sink  (CWE-79)
+    server.js:23:49
+    > res.send(`<script>document.getElementById("x").innerHTML = "${req.query.msg}"</script>`);
+    fix: Use textContent or sanitise with a trusted library such as DOMPurify.
+
+[MEDIUM] CRY204  Insecure randomness for a security value  (CWE-338)
+    server.js:26:15
+    > const token = Math.random().toString(36);
+    fix: Use secrets (Python), crypto.randomBytes (Node) or SecureRandom (Java).
+
+[MEDIUM] CRY201  Weak hash algorithm (MD5/SHA-1)  (CWE-327)
+    server.js:27:23
+    > const digest = crypto.createHash("md5").update("data").digest("hex");
+    fix: Use SHA-256+ for integrity, and bcrypt/scrypt/Argon2 for passwords.
+
+[MEDIUM] CRY201  Weak hash algorithm (MD5/SHA-1)  (CWE-327)
+    upload.php:10:9
+    > $hash = md5($_POST['password']);
+    fix: Use SHA-256+ for integrity, and bcrypt/scrypt/Argon2 for passwords.
+
+[LOW] PY109  Exception silently swallowed  (CWE-703)
+    app.py:57:5
+    > except Exception:
+    fix: Handle or at least log the exception.
+
+[LOW] CFG405  Binds to all network interfaces  (CWE-668)
+    app.py:66:18
+    > app.run(host="0.0.0.0", debug=True)
+    fix: Bind to 127.0.0.1 unless external access is required, and firewall it.
+
+[LOW] CFG405  Binds to all network interfaces  (CWE-668)
+    server.js:31:18
+    > app.listen(3000, "0.0.0.0");
+    fix: Bind to 127.0.0.1 unless external access is required, and firewall it.
+
+------------------------------------------------------------
+Summary: 2 critical, 20 high, 11 medium, 3 low
+critical:2  high:20  medium:11  low:3  info:0

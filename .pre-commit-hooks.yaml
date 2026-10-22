@@ -1,0 +1,6 @@
+- id: secscan
+  name: SecScan security scan
+  description: Audit staged source files for common security weaknesses.
+  entry: secscan --fail-on high --no-color
+  language: python
+  types: [text]
